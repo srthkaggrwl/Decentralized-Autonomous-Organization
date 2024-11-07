@@ -300,3 +300,63 @@ async function createProposal() {
 
 // Add event listener to the "Create Proposal" button
 document.getElementById("createProposal").addEventListener("click", createProposal);
+// Viewing proposal
+async function viewProposal() {
+    const proposalId = document.getElementById("viewProposalId").value;
+    if (daoContract && proposalId) {
+        try {
+            const proposal = await daoContract.methods.getProposal(proposalId).call();
+            const details = `
+                Description: ${proposal[0]}
+                For Votes: ${proposal[1]}
+                Against Votes: ${proposal[2]}
+                Active: ${proposal[3]}
+                Proposer: ${proposal[4]}
+            `;
+            document.getElementById("proposalDetails").innerText = details;
+        } catch (err) {
+            console.error("Error fetching proposal details:", err);
+            alert("Failed to fetch proposal details.");
+        }
+    } else {
+        alert("Please connect your wallet and enter a proposal ID.");
+    }
+}
+
+// Attach Event Listener
+document.getElementById("viewProposal").addEventListener("click", viewProposal);
+
+// Voting Function
+async function vote(proposalId, support) {
+    if (daoContract && accounts.length > 0) {
+        try {
+            await daoContract.methods.vote(proposalId, support).send({ from: accounts[0], gas: 300000 });
+            alert(`Voted ${support ? "In Favor" : "Against"} the proposal!`);
+        } catch (err) {
+            console.error("Error voting on proposal:", err);
+            alert("Failed to vote.");
+        }
+    } else {
+        alert("Please connect your wallet.");
+    }
+}
+
+// Event Listeners for Voting Buttons
+document.getElementById("voteFor").addEventListener("click", () => {
+    const proposalId = document.getElementById("proposalId").value;
+    if (proposalId) {
+        vote(proposalId, true);
+    } else {
+        alert("Please enter a proposal ID to vote.");
+    }
+});
+
+document.getElementById("voteAgainst").addEventListener("click", () => {
+    const proposalId = document.getElementById("proposalId").value;
+    if (proposalId) {
+        vote(proposalId, false);
+    } else {
+        alert("Please enter a proposal ID to vote.");
+    }
+});
+

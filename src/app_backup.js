@@ -296,21 +296,6 @@ async function createProposal() {
     }
 }
 
-// Voting functions
-async function vote(proposalId, support) {
-    if (daoContract && accounts.length > 0) {
-        try {
-            await daoContract.methods.vote(proposalId, support).send({ from: accounts[0], gas: 300000 });
-            alert(`Voted ${support ? "For" : "Against"} the proposal!`);
-        } catch (err) {
-            console.error("Error voting on proposal:", err);
-            alert("Failed to vote.");
-        }
-    } else {
-        alert("Please connect your wallet.");
-    }
-}
-
 // Viewing proposal
 async function viewProposal() {
     const proposalId = document.getElementById("viewProposalId").value;
@@ -332,6 +317,21 @@ async function viewProposal() {
     } else {
         alert("Please connect your wallet and enter a proposal ID.");
     }
+// Voting functions
+async function vote(proposalId, support) {
+    if (daoContract && accounts.length > 0) {
+        try {
+            await daoContract.methods.vote(proposalId, support).send({ from: accounts[0], gas: 300000 });
+            alert(`Voted ${support ? "For" : "Against"} the proposal!`);
+        } catch (err) {
+            console.error("Error voting on proposal:", err);
+            alert("Failed to vote.");
+        }
+    } else {
+        alert("Please connect your wallet.");
+    }
+}
+
 }
 
 // Event listeners

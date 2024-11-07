@@ -7,28 +7,28 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Decentralized Autonomous Organization (DAO)</h1>
+    <div class="container">
+        <h1>Decentralized Autonomous Organization (DAO)</h1>
+        
+        <!-- Create a Proposal -->
+        <h2>Create a Proposal</h2>
+        <input type="text" id="proposalText" placeholder="Enter proposal description">
+        <button id="createProposal">Create Proposal</button>
 
-    <!-- Connect Wallet -->
-    <button id="connectWallet">Connect Wallet</button>
-    <p id="connectionStatus" style="color: red;">Not Connected</p>
-    
-    <!-- Create a Proposal -->
-    <h2>Create a Proposal</h2>
-    <input type="text" id="proposalText" placeholder="Enter proposal description">
-    <button id="createProposal">Create Proposal</button>
+        <!-- Vote on a Proposal -->
+        <h2>Vote on Proposal</h2>
+        <input type="number" id="proposalId" placeholder="Enter Proposal ID">
+        <div class="button-group">
+            <button id="voteFor">Vote For</button>
+            <button id="voteAgainst">Vote Against</button>
+        </div>
 
-    <!-- Vote on a Proposal -->
-    <h2>Vote on Proposal</h2>
-    <input type="number" id="proposalId" placeholder="Enter Proposal ID">
-    <button id="voteFor">Vote For</button>
-    <button id="voteAgainst">Vote Against</button>
-
-    <!-- View Proposal -->
-    <h2>View Proposal</h2>
-    <input type="number" id="viewProposalId" placeholder="Enter Proposal ID">
-    <button id="viewProposal">View Proposal</button>
-    <p id="proposalDetails"></p>
+        <!-- View Proposal -->
+        <h2>View Proposal</h2>
+        <input type="number" id="viewProposalId" placeholder="Enter Proposal ID">
+        <button id="viewProposal">View Proposal</button>
+        <p id="proposalDetails"></p>
+    </div>
 
     <!-- Web3.js -->
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>

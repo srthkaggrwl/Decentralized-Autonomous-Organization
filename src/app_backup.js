@@ -241,12 +241,13 @@ const contractAddress = '0xc1dcbb69898C1C63745014D7cbE84EC2196f8a44'; // Replace
 let accounts = [];
 let daoContract;
 
+
 // Ensure you have web3.js included
 window.addEventListener('load', async () => {
     if (window.ethereum) {
         window.web3 = new Web3(window.ethereum);
         try {
-            // Request account access
+            // Use the eth_requestAccounts method to request account access
             await window.ethereum.request({ method: 'eth_requestAccounts' });
             accounts = await web3.eth.getAccounts();
         } catch (error) {
@@ -258,10 +259,11 @@ window.addEventListener('load', async () => {
         console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
     }
 
-    daoContract = new web3.eth.Contract(abi, contractAddress);
+   daoContract = new web3.eth.Contract(abi, contractAddress);
 });
 
-// Function to get user account
+
+
 async function getUserAccount() {
     try {
         const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
@@ -277,17 +279,14 @@ async function getUserAccount() {
     }
 }
 
-// Create proposal function
+
+// Create proposal using web3.js
 async function createProposal() {
     const proposalText = document.getElementById("proposalText").value;
     if (daoContract && proposalText && accounts.length > 0) {
         try {
-            const receipt = await daoContract.methods.createProposal(proposalText)
-                .send({ from: accounts[0], gas: 3000000 });
-            
-            // Get the Proposal ID from the event logs
-            const proposalId = receipt.events.ProposalCreated.returnValues.id;
-            alert(`Proposal created successfully! Your Proposal ID is ${proposalId}`);
+            await daoContract.methods.createProposal(proposalText).send({ from: accounts[0], gas: 3000000 });
+            alert("Proposal created successfully!");
         } catch (err) {
             console.error("Error creating proposal:", err);
             alert("Failed to create proposal.");
@@ -297,6 +296,63 @@ async function createProposal() {
     }
 }
 
+// Voting functions
+async function vote(proposalId, support) {
+    if (daoContract && accounts.length > 0) {
+        try {
+            await daoContract.methods.vote(proposalId, support).send({ from: accounts[0], gas: 300000 });
+            alert(`Voted ${support ? "For" : "Against"} the proposal!`);
+        } catch (err) {
+            console.error("Error voting on proposal:", err);
+            alert("Failed to vote.");
+        }
+    } else {
+        alert("Please connect your wallet.");
+    }
+}
 
-// Add event listener to the "Create Proposal" button
+// Viewing proposal
+async function viewProposal() {
+    const proposalId = document.getElementById("viewProposalId").value;
+    if (daoContract && proposalId) {
+        try {
+            const proposal = await daoContract.methods.getProposal(proposalId).call();
+            const details = `
+                Description: ${proposal[0]}
+                For Votes: ${proposal[1]}
+                Against Votes: ${proposal[2]}
+                Active: ${proposal[3]}
+                Proposer: ${proposal[4]}
+            `;
+            document.getElementById("proposalDetails").innerText = details;
+        } catch (err) {
+            console.error("Error fetching proposal details:", err);
+            alert("Failed to fetch proposal details.");
+        }
+    } else {
+        alert("Please connect your wallet and enter a proposal ID.");
+    }
+}
+
+// Event listeners
 document.getElementById("createProposal").addEventListener("click", createProposal);
+document.getElementById("voteFor").addEventListener("click", () => {
+    const proposalId = document.getElementById("proposalId").value;
+    vote(proposalId, true);
+});
+document.getElementById("voteAgainst").addEventListener("click", () => {
+    const proposalId = document.getElementById("proposalId").value;
+    vote(proposalId, false);
+});
+document.getElementById("viewProposal").addEventListener("click", viewProposal);
+
+
+window.addEventListener('load', async () => {
+    if (window.ethereum) {
+        window.web3 = new Web3(window.ethereum);
+    } else {
+        console.log("Non-Ethereum browser detected. You should consider trying MetaMask!");
+    }
+
+    daoContract = new web3.eth.Contract(abi, contractAddress);
+});

@@ -10,7 +10,6 @@ This project is a decentralized application (DApp) that allows users to interact
 - [Installation](#installation)
 - [Usage](#usage)
 - [Smart Contract](#smart-contract)
-- [Folder Structure](#folder-structure)
 - [License](#license)
 
 ## Project Overview

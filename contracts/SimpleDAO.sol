@@ -5,6 +5,7 @@
         // Define the structure of a Proposal
         struct Proposal {
             uint id;
+            string title;
             string description;
             uint forVotes;
             uint againstVotes;
@@ -19,7 +20,7 @@
         mapping(address => mapping(uint => bool)) public votes; // Track if an address has voted on a proposal
 
         // Events
-        event ProposalCreated(uint id, string description, address proposer);
+        event ProposalCreated(uint id, string title, string description, address proposer);
         event Voted(uint id, bool support, address voter);
         event ProposalClosed(uint id);
 
@@ -36,19 +37,21 @@
         }
 
         // Function to create a proposal
-        function createProposal(string calldata description) external {
+        function createProposal(string calldata title, string calldata description) external {
             proposals[nextProposalId] = Proposal({
                 id: nextProposalId,
-                description: description,
+                title: title, // Store the title separately
+                description: description, // Store the description separately
                 forVotes: 0,
                 againstVotes: 0,
                 active: true,
                 proposer: msg.sender
             });
-            
-            emit ProposalCreated(nextProposalId, description, msg.sender);
+
+            emit ProposalCreated(nextProposalId, title, description, msg.sender);
             nextProposalId++;
         }
+
 
         // Function to vote on a proposal
         function vote(uint proposalId, bool support) external validProposal(proposalId) {
@@ -68,6 +71,7 @@
 
         // Function to get proposal details
         function getProposal(uint proposalId) external view validProposal(proposalId) returns (
+            string memory title,
             string memory description,
             uint forVotes,
             uint againstVotes,
@@ -76,6 +80,7 @@
         ) {
             Proposal storage proposal = proposals[proposalId];
             return (
+                proposal.title,
                 proposal.description,
                 proposal.forVotes,
                 proposal.againstVotes,

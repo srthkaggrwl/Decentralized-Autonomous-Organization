@@ -322,7 +322,7 @@ const abi = [
       "constant": true
     }
 ];
-const contractAddress = '0x56D4ac18Eca770121b4c3E42266720C9C846D993'; // Replace with actual contract address
+const contractAddress = '0xC60bdAFF4b4B5f6B8b0279c3Ff23804D9cb64533'; // Replace with actual contract address
 let accounts = [];
 let daoContract;
 // Function to update the active proposals table
@@ -496,7 +496,7 @@ async function vote(proposalId, support) {
             location.reload();
         } catch (err) {
             console.error("Error voting on proposal:", err);
-            alert("Failed to vote.");
+            alert("You cannot vote twice");
         }
     } else {
         alert("Please connect your wallet.");

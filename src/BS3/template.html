@@ -70,28 +70,30 @@
             <div class="container-fluid">
                 <!-- Proposal Draft Section -->
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="card">
                             <div class="header"><h4 class="title">Proposal Draft</h4></div>
                             <div class="content">
-                                <form>
+                                <form id="proposalForm">
                                     <div class="form-group">
                                         <label>Proposal Title</label>
-                                        <input type="text" class="form-control" placeholder="Proposal Title">
+                                        <input id="proposalTitle" type="text" class="form-control" placeholder="Proposal Title">
                                     </div>
                                     <div class="form-group">
                                         <label>Proposal Description</label>
-                                        <textarea rows="5" class="form-control" placeholder="Enter your description"></textarea>
+                                        <textarea id="proposalDescription" rows="5" class="form-control" placeholder="Enter your description"></textarea>
                                     </div>
-                                    <button id="createProposal" type="submit" class="btn btn-info btn-fill pull-right">Submit Proposal</button>
-                                    <div class="clearfix"></div>
+                                        <button id="createProposal" type="button" class="btn btn-info btn-fill pull-right">Submit Proposal</button>
+                                        <div class="clearfix"></div>
                                 </form>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Active Proposals -->
-                    <div class="col-md-6">
+                    
+                </div>
+                <!-- Active Proposals-->
+                <div class="row">
+                    <div class="col-md-12">
                         <div class="card">
                             <div class="header">
                                 <h4 class="title">Active Proposals</h4>
@@ -102,18 +104,19 @@
                                     <table class="table">
                                         <thead>
                                             <th>Proposal</th>
+                                            <th>Description</th>
                                             <th>Vote</th>
                                             <th>Results</th>
                                         </thead>
                                         <tbody id="activeProposals">
-                                            <tr>
+                                            <!-- <tr>
                                                 <td>Proposal 1</td>
                                                 <td>
                                                     <button class="btn btn-info btn-simple">In Favor</button>
                                                     <button class="btn btn-danger btn-simple">Against</button>
                                                 </td>
                                                 <td>0 / 0</td>
-                                            </tr>
+                                            </tr> -->
                                             <!-- Additional proposals dynamically added -->
                                         </tbody>
                                     </table>
@@ -128,16 +131,15 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="header">
-                                <h4 class="title">All Proposals</h4>
+                                <h4 class="title">Closed Proposals</h4>
                                 <p class="category">Last 7 Days</p>
                             </div>
                             <div class="content table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <th>Proposal ID</th>
-                                        <th>Date</th>
                                         <th>Title</th>
-                                        <th>Your Vote</th>
+                                        <th>Description</th>
                                         <th>Result</th>
                                     </thead>
                                     <tbody id="allProposals">
@@ -164,6 +166,7 @@
 <script src="assets/js/bootstrap.min.js"></script>
 <script src="assets/js/light-bootstrap-dashboard.js?v=1.4.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-<script src="../app.js"></script>
+<script src="../app.js" defer></script>
+
 </body>
 </html>

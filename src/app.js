@@ -12,6 +12,19 @@ const abi = [
           "internalType": "uint256",
           "name": "id",
           "type": "uint256"
+        }
+      ],
+      "name": "ProposalClosed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
         },
         {
           "indexed": false,
@@ -235,9 +248,55 @@ const abi = [
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getActiveProposals",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "description",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "forVotes",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "againstVotes",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "active",
+              "type": "bool"
+            },
+            {
+              "internalType": "address",
+              "name": "proposer",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct SimpleDAO.Proposal[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
     }
 ];
-const contractAddress = '0xc1dcbb69898C1C63745014D7cbE84EC2196f8a44'; // Replace with actual contract address
+const contractAddress = '0xe05Be54CEB6c32E01a457aD2CdE61388B8F95710'; // Replace with actual contract address
 let accounts = [];
 let daoContract;
 
@@ -259,6 +318,9 @@ window.addEventListener('load', async () => {
     }
 
     daoContract = new web3.eth.Contract(abi, contractAddress);
+
+    // Set up event listeners for real-time updates
+    // listenToEvents();
 });
 
 // Function to get user account
@@ -277,15 +339,12 @@ async function getUserAccount() {
     }
 }
 
-// Create proposal function
 async function createProposal() {
-    const proposalText = document.getElementById("proposalText").value;
+    const proposalText = document.querySelector('textarea').value; // Get value from the textarea
     if (daoContract && proposalText && accounts.length > 0) {
         try {
-            const receipt = await daoContract.methods.createProposal(proposalText)
-                .send({ from: accounts[0], gas: 3000000 });
+            const receipt = await daoContract.methods.createProposal(proposalText).send({ from: accounts[0], gas: 3000000 });
             
-            // Get the Proposal ID from the event logs
             const proposalId = receipt.events.ProposalCreated.returnValues.id;
             alert(`Proposal created successfully! Your Proposal ID is ${proposalId}`);
         } catch (err) {
@@ -300,6 +359,7 @@ async function createProposal() {
 
 // Add event listener to the "Create Proposal" button
 document.getElementById("createProposal").addEventListener("click", createProposal);
+
 // Viewing proposal
 async function viewProposal() {
     const proposalId = document.getElementById("viewProposalId").value;
@@ -314,9 +374,10 @@ async function viewProposal() {
                 Proposer: ${proposal[4]}
             `;
             document.getElementById("proposalDetails").innerText = details;
+
         } catch (err) {
             console.error("Error fetching proposal details:", err);
-            alert("Failed to fetch proposal details.");
+            alert("Proposal not found");
         }
     } else {
         alert("Please connect your wallet and enter a proposal ID.");
@@ -331,7 +392,7 @@ async function vote(proposalId, support) {
     if (daoContract && accounts.length > 0) {
         try {
             await daoContract.methods.vote(proposalId, support).send({ from: accounts[0], gas: 300000 });
-            alert(`Voted ${support ? "In Favor" : "Against"} the proposal!`);
+            alert(`Voted ${support ? "in favor of" : "AGAINST"} the proposal!`);
         } catch (err) {
             console.error("Error voting on proposal:", err);
             alert("Failed to vote.");
@@ -360,3 +421,25 @@ document.getElementById("voteAgainst").addEventListener("click", () => {
     }
 });
 
+// Listen to real-time events
+function listenToEvents() {
+    daoContract.events.ProposalCreated({}, (error, event) => {
+        if (!error) {
+            const { id, description } = event.returnValues;
+            console.log(`New Proposal Created: ID = ${id}, Description = ${description}`);
+            alert(`New Proposal Created: ID = ${id}, Description = ${description}`);
+        } else {
+            console.error("Error listening to ProposalCreated event:", error);
+        }
+    });
+
+    daoContract.events.VoteCasted({}, (error, event) => {
+        if (!error) {
+            const { proposalId, voter, support } = event.returnValues;
+            console.log(`Vote Casted: Proposal ID = ${proposalId}, Voter = ${voter}, Support = ${support}`);
+            alert(`Vote Casted: Proposal ID = ${proposalId}, Voter = ${voter}, Support = ${support ? "For" : "Against"}`);
+        } else {
+            console.error("Error listening to VoteCasted event:", error);
+        }
+    });
+}

@@ -446,6 +446,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Retrieve the Proposal ID from the event logs
                 const proposalId = receipt.events.ProposalCreated.returnValues.id;
                 alert(`Proposal created successfully! Your Proposal ID is ${proposalId}`);
+                location.reload();
+
             } catch (err) {
                 console.error("Error creating proposal:", err);
                 alert("Failed to create proposal.");
@@ -491,6 +493,7 @@ async function vote(proposalId, support) {
         try {
             await daoContract.methods.vote(proposalId, support).send({ from: accounts[0], gas: 300000 });
             alert(`Voted ${support ? "in favor of" : "AGAINST"} the proposal!`);
+            location.reload();
         } catch (err) {
             console.error("Error voting on proposal:", err);
             alert("Failed to vote.");

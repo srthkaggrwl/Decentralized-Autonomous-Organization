@@ -296,7 +296,7 @@ const abi = [
       "constant": true
     }
 ];
-const contractAddress = '0xe05Be54CEB6c32E01a457aD2CdE61388B8F95710'; // Replace with actual contract address
+const contractAddress = '0x3e9C9477C444D09a66E649cf35397b3AFAe08051'; // Replace with actual contract address
 let accounts = [];
 let daoContract;
 
@@ -308,6 +308,7 @@ window.addEventListener('load', async () => {
             // Request account access
             await window.ethereum.request({ method: 'eth_requestAccounts' });
             accounts = await web3.eth.getAccounts();
+            console.log(accounts);
         } catch (error) {
             console.error("User denied account access");
         }
@@ -318,6 +319,7 @@ window.addEventListener('load', async () => {
     }
 
     daoContract = new web3.eth.Contract(abi, contractAddress);
+    console.log(daoContract);
 
     // Set up event listeners for real-time updates
     // listenToEvents();
@@ -328,7 +330,9 @@ async function getUserAccount() {
     try {
         const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
         if (accounts.length > 0) {
+            console.log(accounts[0]);
             return accounts[0]; // Use the first account
+            
         } else {
             throw new Error('No MetaMask accounts found.');
         }
@@ -339,107 +343,131 @@ async function getUserAccount() {
     }
 }
 
-async function createProposal() {
-    const proposalText = document.querySelector('textarea').value; // Get value from the textarea
-    if (daoContract && proposalText && accounts.length > 0) {
-        try {
-            const receipt = await daoContract.methods.createProposal(proposalText).send({ from: accounts[0], gas: 3000000 });
-            
-            const proposalId = receipt.events.ProposalCreated.returnValues.id;
-            alert(`Proposal created successfully! Your Proposal ID is ${proposalId}`);
-        } catch (err) {
-            console.error("Error creating proposal:", err);
-            alert("Failed to create proposal.");
+
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('DOM fully loaded and parsed'); // Debugging statement
+
+    // Add event listener for the "Create Proposal" button
+    document.getElementById('createProposal').addEventListener('click', async function (e) {
+        e.preventDefault(); // Prevent default behavior of the button
+
+        // Use querySelector to get title and description inputs
+        const proposalTitle = document.querySelector('input[placeholder="Proposal Title"]').value;
+        const proposalDescription = document.querySelector('textarea[placeholder="Enter your description"]').value;
+
+        console.log('Proposal Title:', proposalTitle);
+        console.log('Proposal Description:', proposalDescription);
+
+        if (!proposalTitle || !proposalDescription) {
+            alert("Please fill in both the title and description.");
+            return;
         }
-    } else {
-        alert("Please connect your wallet and enter a proposal description.");
-    }
-}
 
+        const proposalText = `${proposalTitle} - ${proposalDescription}`; // Combine title and description
+        console.log('Proposal Text:', proposalText); // Debugging output
 
-// Add event listener to the "Create Proposal" button
-document.getElementById("createProposal").addEventListener("click", createProposal);
+        if (daoContract && accounts.length > 0) {
+            try {
+                // Call the createProposal function on the smart contract
+                const receipt = await daoContract.methods.createProposal(proposalText).send({
+                    from: accounts[0],
+                    gas: 3000000,
+                });
 
-// Viewing proposal
-async function viewProposal() {
-    const proposalId = document.getElementById("viewProposalId").value;
-    if (daoContract && proposalId) {
-        try {
-            const proposal = await daoContract.methods.getProposal(proposalId).call();
-            const details = `
-                Description: ${proposal[0]}
-                For Votes: ${proposal[1]}
-                Against Votes: ${proposal[2]}
-                Active: ${proposal[3]}
-                Proposer: ${proposal[4]}
-            `;
-            document.getElementById("proposalDetails").innerText = details;
-
-        } catch (err) {
-            console.error("Error fetching proposal details:", err);
-            alert("Proposal not found");
-        }
-    } else {
-        alert("Please connect your wallet and enter a proposal ID.");
-    }
-}
-
-// Attach Event Listener
-document.getElementById("viewProposal").addEventListener("click", viewProposal);
-
-// Voting Function
-async function vote(proposalId, support) {
-    if (daoContract && accounts.length > 0) {
-        try {
-            await daoContract.methods.vote(proposalId, support).send({ from: accounts[0], gas: 300000 });
-            alert(`Voted ${support ? "in favor of" : "AGAINST"} the proposal!`);
-        } catch (err) {
-            console.error("Error voting on proposal:", err);
-            alert("Failed to vote.");
-        }
-    } else {
-        alert("Please connect your wallet.");
-    }
-}
-
-// Event Listeners for Voting Buttons
-document.getElementById("voteFor").addEventListener("click", () => {
-    const proposalId = document.getElementById("proposalId").value;
-    if (proposalId) {
-        vote(proposalId, true);
-    } else {
-        alert("Please enter a proposal ID to vote.");
-    }
-});
-
-document.getElementById("voteAgainst").addEventListener("click", () => {
-    const proposalId = document.getElementById("proposalId").value;
-    if (proposalId) {
-        vote(proposalId, false);
-    } else {
-        alert("Please enter a proposal ID to vote.");
-    }
-});
-
-// Listen to real-time events
-function listenToEvents() {
-    daoContract.events.ProposalCreated({}, (error, event) => {
-        if (!error) {
-            const { id, description } = event.returnValues;
-            console.log(`New Proposal Created: ID = ${id}, Description = ${description}`);
-            alert(`New Proposal Created: ID = ${id}, Description = ${description}`);
+                // Retrieve the Proposal ID from the event logs
+                const proposalId = receipt.events.ProposalCreated.returnValues.id;
+                alert(`Proposal created successfully! Your Proposal ID is ${proposalId}`);
+            } catch (err) {
+                console.error("Error creating proposal:", err);
+                alert("Failed to create proposal.");
+            }
         } else {
-            console.error("Error listening to ProposalCreated event:", error);
+            alert("Please connect your wallet and ensure the contract is loaded.");
         }
     });
+});
 
-    daoContract.events.VoteCasted({}, (error, event) => {
-        if (!error) {
-            const { proposalId, voter, support } = event.returnValues;
-            console.log(`Vote Casted: Proposal ID = ${proposalId}, Voter = ${voter}, Support = ${support}`);
-            alert(`Vote Casted: Proposal ID = ${proposalId}, Voter = ${voter}, Support = ${support ? "For" : "Against"}`);
-        } else {
-            console.error("Error listening to VoteCasted event:", error);
-        }
-    });
-}
+
+// // Viewing proposal
+// async function viewProposal() {
+//     const proposalId = document.getElementById("viewProposalId").value;
+//     if (daoContract && proposalId) {
+//         try {
+//             const proposal = await daoContract.methods.getProposal(proposalId).call();
+//             const details = `
+//                 Description: ${proposal[0]}
+//                 For Votes: ${proposal[1]}
+//                 Against Votes: ${proposal[2]}
+//                 Active: ${proposal[3]}
+//                 Proposer: ${proposal[4]}
+//             `;
+//             document.getElementById("proposalDetails").innerText = details;
+
+//         } catch (err) {
+//             console.error("Error fetching proposal details:", err);
+//             alert("Proposal not found");
+//         }
+//     } else {
+//         alert("Please connect your wallet and enter a proposal ID.");
+//     }
+// }
+
+// // Attach Event Listener
+// document.getElementById("viewProposal").addEventListener("click", viewProposal);
+
+// // Voting Function
+// async function vote(proposalId, support) {
+//     if (daoContract && accounts.length > 0) {
+//         try {
+//             await daoContract.methods.vote(proposalId, support).send({ from: accounts[0], gas: 300000 });
+//             alert(`Voted ${support ? "in favor of" : "AGAINST"} the proposal!`);
+//         } catch (err) {
+//             console.error("Error voting on proposal:", err);
+//             alert("Failed to vote.");
+//         }
+//     } else {
+//         alert("Please connect your wallet.");
+//     }
+// }
+
+// // Event Listeners for Voting Buttons
+// document.getElementById("voteFor").addEventListener("click", () => {
+//     const proposalId = document.getElementById("proposalId").value;
+//     if (proposalId) {
+//         vote(proposalId, true);
+//     } else {
+//         alert("Please enter a proposal ID to vote.");
+//     }
+// });
+
+// document.getElementById("voteAgainst").addEventListener("click", () => {
+//     const proposalId = document.getElementById("proposalId").value;
+//     if (proposalId) {
+//         vote(proposalId, false);
+//     } else {
+//         alert("Please enter a proposal ID to vote.");
+//     }
+// });
+
+// // Listen to real-time events
+// function listenToEvents() {
+//     daoContract.events.ProposalCreated({}, (error, event) => {
+//         if (!error) {
+//             const { id, description } = event.returnValues;
+//             console.log(`New Proposal Created: ID = ${id}, Description = ${description}`);
+//             alert(`New Proposal Created: ID = ${id}, Description = ${description}`);
+//         } else {
+//             console.error("Error listening to ProposalCreated event:", error);
+//         }
+//     });
+
+//     daoContract.events.VoteCasted({}, (error, event) => {
+//         if (!error) {
+//             const { proposalId, voter, support } = event.returnValues;
+//             console.log(`Vote Casted: Proposal ID = ${proposalId}, Voter = ${voter}, Support = ${support}`);
+//             alert(`Vote Casted: Proposal ID = ${proposalId}, Voter = ${voter}, Support = ${support ? "For" : "Against"}`);
+//         } else {
+//             console.error("Error listening to VoteCasted event:", error);
+//         }
+//     });
+// }

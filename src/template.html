@@ -74,16 +74,16 @@
                         <div class="card">
                             <div class="header"><h4 class="title">Proposal Draft</h4></div>
                             <div class="content">
-                                <form>
+                                <form id="proposalForm">
                                     <div class="form-group">
                                         <label>Proposal Title</label>
-                                        <input type="text" class="form-control" placeholder="Proposal Title">
+                                        <input id="proposalTitle" type="text" class="form-control" placeholder="Proposal Title">
                                     </div>
                                     <div class="form-group">
                                         <label>Proposal Description</label>
-                                        <textarea rows="5" class="form-control" placeholder="Enter your description"></textarea>
+                                        <textarea id="proposalDescription" rows="5" class="form-control" placeholder="Enter your description"></textarea>
                                     </div>
-                                    <button id="createProposal" type="button" class="btn btn-info btn-fill pull-right">Submit Proposal</button>
+                                        <button id="createProposal" type="button" class="btn btn-info btn-fill pull-right">Submit Proposal</button>
                                 </form>
                             </div>
                         </div>
@@ -162,6 +162,8 @@
 <script src="assets/js/jquery.3.2.1.min.js"></script>
 <script src="assets/js/bootstrap.min.js"></script>
 <script src="assets/js/light-bootstrap-dashboard.js?v=1.4.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<script src="app.js" defer></script>
 
 </body>
 </html>

@@ -373,7 +373,7 @@ const abi = [
       "constant": true
     }
 ];
-const contractAddress = '0x5EB871320957103dA2CcFFd6468B21542F28f22f'; // Replace with actual contract address
+const contractAddress = '0x26402F11535EE60CD3b33fdfB333dB28c64af474'; // Replace with actual contract address
 let accounts = [];
 let daoContract;
 // Function to update the active proposals table

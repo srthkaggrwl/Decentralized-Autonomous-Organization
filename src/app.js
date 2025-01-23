@@ -320,9 +320,60 @@ const abi = [
       "stateMutability": "view",
       "type": "function",
       "constant": true
+    },
+    {
+      "inputs": [],
+      "name": "getClosedProposals",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "title",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "description",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "forVotes",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "againstVotes",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "active",
+              "type": "bool"
+            },
+            {
+              "internalType": "address",
+              "name": "proposer",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct SimpleDAO.Proposal[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
     }
 ];
-const contractAddress = '0xC60bdAFF4b4B5f6B8b0279c3Ff23804D9cb64533'; // Replace with actual contract address
+const contractAddress = '0x5EB871320957103dA2CcFFd6468B21542F28f22f'; // Replace with actual contract address
 let accounts = [];
 let daoContract;
 // Function to update the active proposals table
@@ -336,12 +387,15 @@ function updateActiveProposals() {
             proposals.forEach((proposal) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
+                    <td>${proposal.id}</td>
                     <td>${proposal.title}</td>
+                    <td>${proposal.description}</td>
                     <td>
-                        <button class="btn btn-info btn-simple" onclick="vote(${proposal.id}, true)">In Favor</button>
-                        <button class="btn btn-danger btn-simple" onclick="vote(${proposal.id}, false)">Against</button>
+                        <button class="btn btn-info btn" onclick="vote(${proposal.id}, true)">In Favor</button>
+                        <button class="btn btn-danger btn" onclick="vote(${proposal.id}, false)">Against</button>
                     </td>
                     <td>${proposal.forVotes} / ${proposal.againstVotes}</td>
+                    <td>Active</td>
                 `;
                 activeProposalsTable.appendChild(row);
             });
@@ -351,6 +405,33 @@ function updateActiveProposals() {
     }
 }
 
+// Function to update the active proposals table
+function updateClosedProposals() {
+    if (daoContract) {
+        daoContract.methods.getClosedProposals().call().then((proposals) => {
+            console.log("Proposals",proposals);
+            const closedProposalsTable = document.getElementById("closedProposals");
+            closedProposalsTable.innerHTML = '';  // Clear the existing table rows
+            
+            // Iterate through each proposal and add a row in the table
+            proposals.forEach((proposal) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${proposal.id}</td>
+                    <td>${proposal.title}</td>
+                    <td>${proposal.description}</td>
+                    <td>${proposal.forVotes} / ${proposal.againstVotes}</td>
+                    <td>Closed</td>
+                `;
+                closedProposalsTable.appendChild(row);
+            });
+        }).catch((err) => {
+            console.error("Error fetching closed proposals:", err);
+        });
+    }
+}
+
+
 // Modify the listenToEvents function to listen for ProposalCreated
 function listenToEvents() {
     daoContract.events.ProposalCreated({}, (error, event) => {
@@ -358,6 +439,7 @@ function listenToEvents() {
             const { id, title, description } = event.returnValues;
             console.log(`New Proposal Created: ID = ${id}, Title = ${title}, Description = ${description}`);
             updateActiveProposals(); // Update the table when a new proposal is created
+            updateClosedProposals();
         } else {
             console.error("Error listening to ProposalCreated event:", error);
         }
@@ -393,6 +475,7 @@ window.addEventListener('load', async () => {
 
     // Fetch the active proposals and populate the table initially
     updateActiveProposals();
+    updateClosedProposals();
 
     // Set up event listeners for real-time updates
     listenToEvents();

@@ -116,4 +116,28 @@
             }
             return activeProposals;
         }
+
+        // Function to get all closed proposals
+        function getClosedProposals() external view returns (Proposal[] memory) {
+            uint closedCount = 0;
+            // Iterate through all proposals to count how many are closed
+            for (uint i = 1; i < nextProposalId; i++) {
+                if (!proposals[i].active) {
+                    closedCount++;
+                }
+            }
+
+            // Create an array to store closed proposals
+            Proposal[] memory closedProposals = new Proposal[](closedCount);
+            uint index = 0;
+            // Iterate through all proposals to collect the closed ones
+            for (uint i = 1; i < nextProposalId; i++) {
+                if (!proposals[i].active) {
+                    closedProposals[index] = proposals[i];
+                    index++;
+                }
+            }
+            return closedProposals;
+        }
+
     }

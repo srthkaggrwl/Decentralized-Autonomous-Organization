@@ -103,21 +103,15 @@
                                 <div class="table-full-width">
                                     <table class="table">
                                         <thead>
-                                            <th>Proposal</th>
+                                            <th>ID</th>
+                                            <th>Title</th>
                                             <th>Description</th>
-                                            <th>Vote</th>
-                                            <th>Results</th>
+                                            <th>Cast vote</th>
+                                            <th>Count</th>
+                                            <th>Status</th>
                                         </thead>
                                         <tbody id="activeProposals">
-                                            <!-- <tr>
-                                                <td>Proposal 1</td>
-                                                <td>
-                                                    <button class="btn btn-info btn-simple">In Favor</button>
-                                                    <button class="btn btn-danger btn-simple">Against</button>
-                                                </td>
-                                                <td>0 / 0</td>
-                                            </tr> -->
-                                            <!-- Additional proposals dynamically added -->
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -126,7 +120,7 @@
                     </div>
                 </div>
 
-                <!-- All Proposals -->
+                <!-- Closed Proposals -->
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
@@ -136,13 +130,14 @@
                             </div>
                             <div class="content table-responsive">
                                 <table class="table table-hover">
-                                    <thead>
-                                        <th>Proposal ID</th>
-                                        <th>Title</th>
-                                        <th>Description</th>
-                                        <th>Result</th>
-                                    </thead>
-                                    <tbody id="allProposals">
+                                        <thead>
+                                            <th>ID</th>
+                                            <th>Title</th>
+                                            <th>Description</th>
+                                            <th>Vote</th>
+                                            <th>Status</th>
+                                        </thead>
+                                    <tbody id="closedProposals">
                                         <!-- Dynamic Proposal Rows -->
                                     </tbody>
                                 </table>

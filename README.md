@@ -1,16 +1,17 @@
-# DAO Web Application
+# Decentralized Autonomous Organization (DAO) Web Application
 
-This project is a decentralized application (DApp) that allows users to interact with a Decentralized Autonomous Organization (DAO) on the Ethereum blockchain. Users can create proposals, vote on them, and view proposal details, all within a secure and transparent environment. This DApp is built with HTML, JavaScript, and Web3.js, and communicates with an Ethereum smart contract deployed to a blockchain network.
+This project is a decentralized application (DApp) that allows users to interact with a Decentralized Autonomous Organization (DAO) on the Ethereum blockchain. Users can create proposals, vote on them, and view proposal details, all within a secure and transparent environment. The DApp is built with HTML, JavaScript, and Web3.js and communicates with an Ethereum smart contract deployed to a blockchain network.
 
 ## Table of Contents
+1. Project Overview  
+2. Features  
+3. Technology Stack  
+4. Installation  
+5. Usage  
+6. Smart Contract  
+7. License
 
-- [Project Overview](#project-overview)
-- [Features](#features)
-- [Technology Stack](#technology-stack)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Smart Contract](#smart-contract)
-- [License](#license)
+---
 
 ## Project Overview
 
@@ -18,62 +19,119 @@ The DAO Web Application allows users to participate in a DAO by proposing change
 
 ## Features
 
-- **Create Proposals**: Users can submit new proposals with a description that gets recorded on the blockchain.
-- **Vote on Proposals**: Users can vote in favor or against a proposal.
-- **View Proposals**: Users can view details of proposals, including the description, vote counts, status, and proposer information.
+- **Create Proposals:** Users can submit new proposals with a description that gets recorded on the blockchain.  
+- **Vote on Proposals:** Users can vote in favor or against a proposal.  
+- **View Proposals:** Users can view details of proposals, including the description, vote counts, status, and proposer information.  
+
+---
 
 ## Technology Stack
 
-- **Frontend**: HTML, CSS, JavaScript
-- **Blockchain Interface**: Web3.js
-- **Ethereum Wallet**: MetaMask
-- **Smart Contract**: Solidity
+- **Frontend:** HTML, CSS, JavaScript  
+- **Blockchain Interface:** Web3.js  
+- **Ethereum Wallet:** MetaMask  
+- **Smart Contract:** Solidity  
+
+---
 
 ## Installation
 
-1. **Clone the repository**:
-    ```bash
-    git clone https://github.com/srthkaggrwl/Decentralized-Autonomous-Organization
-    cd Decentralized-Autonomous-Organization
-    ```
+### Prerequisites
 
-2. **Install Dependencies**:
-    Ensure you have `web3.js` installed:
-    ```bash
-    npm install web3
-    ```
+Ensure you have the following tools installed:
+1. **Node.js and npm**: Download and install from [Node.js official website](https://nodejs.org/).  
+2. **Truffle**: Install globally with:
+   ```bash
+   npm install -g truffle
+   ```
+3. **Ganache**: Download and install from [Ganache official website](https://trufflesuite.com/ganache/).
+4. **MetaMask**: Add the MetaMask extension to your browser from [MetaMask website](https://metamask.io/).
 
-3. **Deploy the Smart Contract**:
-    Use Truffle or Hardhat to deploy the `SimpleDAO` smart contract to a test blockchain (e.g., Ganache or an Ethereum testnet).
-    
-    After deploying, replace `contractAddress` in `app.js` with your deployed contract address.
+### Clone the Repository
+
+```bash
+git https://github.com/srthkaggrwl/Decentralized-Autonomous-Organization/tree/hackathon
+cd Decentralized-Autonomous-Organization
+```
+
+### Install Dependencies
+
+Ensure you have Web3.js installed:
+```bash
+npm install web3
+```
+
+---
+
+## Deployment
+
+### 1. Start Ganache
+
+Open Ganache and create a new workspace or use Quickstart Ethereum.
+
+### 2. Compile and Deploy Smart Contract
+
+Using Truffle, compile and deploy the `SimpleDAO` smart contract to Ganache:
+```bash
+truffle compile
+truffle migrate
+```
+After deployment, note the contract address from the output.
+
+### 3. Update Contract Address
+
+Replace `contractAddress` in `src/app.js` with the deployed contract address:
+```javascript
+const contractAddress = "<YOUR_DEPLOYED_CONTRACT_ADDRESS>";
+```
+
+---
 
 ## Usage
 
-1. **Start Ganache or Connect MetaMask** to an Ethereum network to deploy and test the DApp.
+### 1. Connect MetaMask
 
-2. **Run the Application**:
-    Open `index.html` in a web browser. MetaMask will prompt you to connect your wallet and approve interactions with the DApp.
+- Open MetaMask and connect it to the Ganache blockchain.
+- Import one of the private keys from Ganache into MetaMask to fund your wallet for testing.
 
-3. **Create and Vote on Proposals**:
-    - **Create Proposal**: Enter a proposal description and click "Create Proposal."
-    - **Vote on Proposal**: Enter the proposal ID, then click "Vote For" or "Vote Against."
-    - **View Proposal**: Enter the proposal ID to fetch proposal details.
+### 2. Run the Application
+
+Open `index.html` in a web browser. MetaMask will prompt you to connect your wallet and approve interactions with the DApp.
+
+### 3. Create, Vote, and View Proposals
+
+#### **Create Proposal**
+1. Enter a proposal description in the input field.
+2. Click "Create Proposal."
+3. MetaMask will prompt for confirmation. Approve the transaction to create the proposal.
+
+#### **Vote on Proposal**
+1. Enter the proposal ID and choose to vote "For" or "Against."
+2. Click the corresponding button.
+3. MetaMask will prompt for confirmation. Approve the transaction to cast your vote.
+
+---
 
 ## Smart Contract
 
-The smart contract, `SimpleDAO`, is written in Solidity and handles core functionalities of the DAO:
-- `createProposal`: Allows any user to submit a new proposal.
-- `vote`: Enables users to vote on an active proposal.
-- `getProposal`: Fetches details of a specified proposal.
-- Events, such as `ProposalCreated` and `Voted`, help provide feedback on the blockchain's state.
+The smart contract, `SimpleDAO`, is written in Solidity and handles the core functionalities of the DAO:
+
+- **`createProposal`:** Allows any user to submit a new proposal.  
+- **`vote`:** Enables users to vote on an active proposal.  
+- **`getProposal`:** Fetches details of a specified proposal.  
+
+### Events
+
+- `ProposalCreated`: Triggered when a new proposal is created.
+- `Voted`: Triggered when a vote is cast.
 
 ### Smart Contract Functions
 
-- **`createProposal(string description)`**: Creates a new proposal.
-- **`vote(uint proposalId, bool support)`**: Casts a vote (in favor or against).
-- **`getProposal(uint proposalId)`**: Retrieves proposal details.
+- **`createProposal(string description)`:** Creates a new proposal.  
+- **`vote(uint proposalId, bool support)`:** Casts a vote (in favor or against).  
+- **`getProposal(uint proposalId)`:** Retrieves proposal details.  
 
-## License
+---
 
-This project is licensed under the MIT License.
+
+
